@@ -26,7 +26,7 @@
           >
             <img :src="profileImage"  class="avatar avatar-sm rounded-circle"  style="background-image" alt="">
             <div class="d-none d-xl-block ps-2">
-              <div>{{ user?.name || "Guest" }}</div>
+              <div>{{ user?.fullname || "Guest" }}</div>
               <div class="mt-1 small text-secondary">{{ user?.email || "Guest" }}</div>
             </div>
           </a>

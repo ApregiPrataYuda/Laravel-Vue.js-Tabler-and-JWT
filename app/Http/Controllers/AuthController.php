@@ -20,17 +20,22 @@ class AuthController extends Controller
     {
         // Validasi data input
         $request->validate([
-            'name'     => 'required|string|max:255',
+            'fullname'     => 'required|string|max:255',
             'email'    => 'required|string|email|unique:users',
             'password' => 'required|string|min:6',
         ]);
 
         // Buat pengguna baru
         $user = Users::create([
-            'name'     => $request->name,
+            'fullname'     => $request->fullname,
+            'username'     => $request->username,
+            'phone_number'    => $request->phone_number,
             'email'    => $request->email,
-            'password' => bcrypt($request->password), // Enkripsi password
+            'role'    => 2,
+            'password' => bcrypt($request->password), 
         ]);
+
+
 
         // Buat token dari objek pengguna
         $token = JWTAuth::fromUser($user);

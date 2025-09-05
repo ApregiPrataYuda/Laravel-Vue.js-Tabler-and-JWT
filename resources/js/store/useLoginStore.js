@@ -57,7 +57,7 @@ export const useAuthStore = defineStore("auth", () => {
             router.push("/dashboard");
             break;
           case 2:
-            router.push("/RegisterTournamen");
+            router.push("/dashboard");
             break;
           default:
             error.value = "Role Anda tidak terdaftar di sistem kami";
