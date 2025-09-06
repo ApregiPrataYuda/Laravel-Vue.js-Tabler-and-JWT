@@ -1,7 +1,7 @@
 <script setup>
 
 import FrontendLayout from '../../../layouts/FrontendLayout.vue';
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // Contoh state untuk binding
 const fullName = ref('')
@@ -11,6 +11,21 @@ const address = ref('')
 const gender = ref('')
 const subscribe = ref('')
 const agree = ref(false)
+
+// onMounted(() => {
+//   const storedUser = localStorage.getItem("user");
+//   if (storedUser) {
+//     fullName.value = JSON.parse(storedUser);
+//   }
+// });
+
+onMounted(() => {
+  const user = JSON.parse(localStorage.getItem('user'))
+  if (user) {
+    fullName.value = user.fullname
+    email.value = user.email
+  }
+})
 
 const submitForm = () => {
   console.log({
@@ -92,7 +107,7 @@ const submitForm = () => {
              
                 <div class="mb-3">
                   <label for="fullname" class="form-label text-warning">Nama lengkap</label>
-                  <input type="text" class="form-control" id="fullname" placeholder="Enter Nama lengkap">
+                  <input type="text" v-model="fullName" class="form-control" id="fullname" placeholder="Enter Nama lengkap" disabled>
                 </div>
 
                 <div class="mb-3">
@@ -102,7 +117,7 @@ const submitForm = () => {
 
                 <div class="mb-3">
                   <label for="email" class="form-label text-warning">Email</label>
-                  <input type="email" class="form-control" id="email" placeholder="Enter Your Email">
+                  <input type="email" v-model="email" class="form-control" id="email" placeholder="Enter Your Email" disabled>
                 </div>
                 <div class="mb-3">
                   <label for="tanggal_lahir" class="form-label text-warning">Tanggal lahir (opsional, untuk data rekam medis)</label>

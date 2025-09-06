@@ -1,187 +1,127 @@
 <script setup>
-
 import FrontendLayout from '../../../layouts/FrontendLayout.vue';
 import { ref } from 'vue'
-const Error = '/images/error.png'
+const showSummary = (summary) => {
+  alert(summary)
+}
+const checkupHistory = ref([
+  {
+    date: '2025-08-15',
+    doctor: 'Dr. Siti Rahma',
+    department: 'Dental',
+    status: 'Completed',
+    summary: 'Checkup rutin, tidak ada masalah.'
+  },
+  {
+    date: '2025-06-10',
+    doctor: 'Dr. Budi Santoso',
+    department: 'General',
+    status: 'Completed',
+    summary: 'Cek tensi dan gula darah, semua normal.'
+  },
+  {
+    date: '2024-12-01',
+    doctor: 'Dr. Lina',
+    department: 'Dental',
+    status: 'Canceled',
+    summary: 'Pasien tidak hadir.'
+  }
+])
 </script>
-
-
-
 
 <template>
 <FrontendLayout>
 
 
-     <div class="page-wrapper">
-        <!-- BEGIN PAGE HEADER -->
-        <div class="page-header d-print-none" aria-label="Page header">
-          <div class="container-xl">
-            <div class="row g-2 align-items-center">
-              <div class="col">
-                <h2 class="page-title text-warning">Your List Checkup Log</h2>
-              </div>
+  <header class="hero pb-0">
+      <div class="container">
+        <h3 class="hero-title">Hallo <span class="text-success fw-semibold"> Anggita </span> Saat ini<span class="text-warning fw-semibold"> Kamu bisa check </span> Riwayat <span class="text-warning fw-semibold">Kunjungan <i class="fa-solid fa-map-location-dot"></i></span> Dan History Chekup Kamu Lo </h3>
+       
+        <div class="my-5">
+          <div class="row g-3 justify-content-center">
+            <div class="col-auto">
+              <RouterLink 
+                to="/form-reservasi-client" 
+                class="btn btn-lg btn-warning"
+              >
+                Yuk Registerasi Lagi dan Reservasi Sekarang
+              </RouterLink>
             </div>
+            
           </div>
         </div>
-        <!-- END PAGE HEADER -->
-        <!-- BEGIN PAGE BODY -->
-        <div class="page-body">
-          <div class="container-xl">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title text-warning">Your List Checkup Log</h3>
-              </div>
-              <div class="card-body">
-                <div class="datagrid">
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Registrar</div>
-                    <div class="datagrid-content">Third Party</div>
+          </div>
+    </header>
+
+
+  <div class="page-wrapper">
+    <div class="page-header d-print-none">
+      <div class="container-xl">
+        <h2 class="page-title text-warning">Checkup History</h2>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="container-xl">
+        
+        <div v-if="checkupHistory.length">
+          <div class="row row-cards">
+            <div class="col-12 col-md-6 col-lg-4" v-for="item in checkupHistory" :key="item.date">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">{{ new Date(item.date).toLocaleDateString() }}</h3>
+                </div>
+                <div class="card-body">
+                  <div class="mb-2">
+                    <strong>Doctor:</strong> {{ item.doctor }}
                   </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Nameservers</div>
-                    <div class="datagrid-content">Third Party</div>
+                  <div class="mb-2">
+                    <strong>Department:</strong> {{ item.department }}
                   </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Port number</div>
-                    <div class="datagrid-content">3306</div>
+                  <div class="mb-2">
+                    <span 
+                      :class="{
+                        'badge bg-green-lt': item.status === 'Completed',
+                        'badge bg-yellow-lt': item.status === 'Pending',
+                        'badge bg-red-lt': item.status === 'Canceled'
+                      }"
+                    >
+                      {{ item.status }}
+                    </span>
                   </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Expiration date</div>
-                    <div class="datagrid-content">–</div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Creator</div>
-                    <div class="datagrid-content">
-                      <div class="d-flex align-items-center">
-                        <span class="avatar avatar-xs me-2" style="background-image: url(./static/avatars/000m.jpg)"> </span>
-                        Paweł Kuna
-                      </div>
-                    </div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Age</div>
-                    <div class="datagrid-content">15 days</div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Edge network</div>
-                    <div class="datagrid-content">
-                      <span class="status status-green"> Active </span>
-                    </div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Avatars list</div>
-                    <div class="datagrid-content">
-                      <div class="avatar-list avatar-list-stacked">
-                        <span class="avatar avatar-xs" style="background-image: url(./static/avatars/000m.jpg)"> </span>
-                        <span class="avatar avatar-xs" style="background-image: url(./static/avatars/052f.jpg)"> </span>
-                        <span class="avatar avatar-xs" style="background-image: url(./static/avatars/002m.jpg)"> </span>
-                        <span class="avatar avatar-xs" style="background-image: url(./static/avatars/003m.jpg)"> </span>
-                        <span class="avatar avatar-xs" style="background-image: url(./static/avatars/000f.jpg)"> </span>
-                        <span class="avatar avatar-xs"> +3 </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Checkbox</div>
-                    <div class="datagrid-content">
-                      <label class="form-check">
-                        <input class="form-check-input" type="checkbox" checked />
-                        <span class="form-check-label">Click me</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Icon</div>
-                    <div class="datagrid-content">
-                      <!-- Download SVG icon from http://tabler.io/icons/icon/check -->
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="icon text-green icon-2"
-                      >
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
-                      Checked
-                    </div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Form control</div>
-                    <div class="datagrid-content">
-                      <input type="text" class="form-control form-control-flush" placeholder="Input placeholder" />
-                    </div>
-                  </div>
-                  <div class="datagrid-item">
-                    <div class="datagrid-title">Longer description</div>
-                    <div class="datagrid-content">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</div>
+                  <div>
+                   <button class="btn  btn-outline-warning w-100" @click="showSummary(item.summary)">
+                    Lihat Detail
+                  </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        </div>
 
-
-
-        <div class="page-body">
-          <div class="container-xl">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title text-warning">Data Your List Checkup Log</h3>
-              </div>
-              <div class="card-body">
-        <div class="page d-flex flex-column">
-     <div class="page-body" style="padding-bottom: 400px;">
-  <div class="container-xl">
-      <div class="page page-center">
-      <div class="container-tight py-4">
-        <div class="empty">
+        <div v-else class="empty">
           <div class="empty-img">
-             <img :src="Error" alt="">
+            <img src="" alt="No data">
           </div>
-          <p class="empty-title">Oops… Kamu Tidak Punya Data Checkup Log</p>
-          <p class="empty-subtitle text-secondary">We are sorry but the page you are looking for was not found</p>
+          <p class="empty-title">Oops… Kamu Tidak Punya Checkup History</p>
+          <p class="empty-subtitle text-secondary">Coba lakukan checkup pertama kamu sekarang!</p>
           <div class="empty-action">
-            <a href="/." class="btn btn-primary btn-4">
-              <!-- Download SVG icon from http://tabler.io/icons/icon/arrow-left -->
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-2"
-              >
-                <path d="M5 12l14 0" />
-                <path d="M5 12l6 6" />
-                <path d="M5 12l6 -6" />
+            <a href="/." class="btn btn-primary">
+              <!-- Icon Tabler -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <line x1="5" y1="12" x2="11" y2="18"/>
+                <line x1="5" y1="12" x2="11" y2="6"/>
               </svg>
               Take me home
             </a>
           </div>
         </div>
+
       </div>
     </div>
-   </div>
-   </div>
-   </div>
-   </div>
-   </div>
-   </div>
-   </div>
-
-
-
+  </div>
 </FrontendLayout>
 </template>

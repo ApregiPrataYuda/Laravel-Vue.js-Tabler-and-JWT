@@ -46,7 +46,7 @@ const LogoCompany = '/images/logo.png'
 
       <!-- Copyright -->
       <div class="text-center">
-        <small>© Copyright 2023 – PT JWF Dental Medika Indonesia</small>
+        <small>© Copyright 2023 - Apregi pratayuda</small>
       </div>
     </div>
   </footer>

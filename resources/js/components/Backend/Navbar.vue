@@ -24,7 +24,8 @@
             data-bs-toggle="dropdown"
             aria-label="Open user menu"
           >
-            <img :src="profileImage"  class="avatar avatar-sm rounded-circle"  style="background-image" alt="">
+            <!-- <img :src="profileImage"  class="avatar avatar-sm rounded-circle"  style="background-image" alt=""> -->
+            <img class="avatar avatar-sm rounded-circle" style="background-image"  :src="`https://api.dicebear.com/9.x/initials/svg?seed=${user?.fullname || 'Guest'}`">
             <div class="d-none d-xl-block ps-2">
               <div>{{ user?.fullname || "Guest" }}</div>
               <div class="mt-1 small text-secondary">{{ user?.email || "Guest" }}</div>

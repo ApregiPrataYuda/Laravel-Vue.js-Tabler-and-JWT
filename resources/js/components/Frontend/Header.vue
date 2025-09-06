@@ -1,6 +1,23 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "../../store/useLoginStore";
+import BoringAvatar from "vue-boring-avatars"
+const auth = useAuthStore();
 const profileImage = '/images/avatar.jpg';
 const LogoCompany = '/images/logo.png'
+
+const user = ref(null);
+
+onMounted(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    user.value = JSON.parse(storedUser);
+  }
+});
+
+const logout = async () => {
+ auth.logout();
+};
 </script>
 
 
@@ -58,20 +75,24 @@ const LogoCompany = '/images/logo.png'
 
 
             <div class="nav-item dropdown">
+
+              
+
+
               <a href="#" class="nav-link d-flex lh-1 p-0 px-2" data-bs-toggle="dropdown" aria-label="Open user menu">
-                  <img :src="profileImage"  class="avatar avatar-sm rounded-circle"  style="background-image" alt="">
-                <div class="d-none d-xl-block ps-2">
-                  <div>Apregi</div>
-                  <div class="mt-1 small text-secondary">UI Designer</div>
-                </div>
+                  <img  :src="`https://api.dicebear.com/9.x/initials/svg?seed=${user?.fullname || 'Guest'}`" 
+                  class="avatar avatar-sm rounded-circle"  style="background-image" alt="">
+                      <div class="d-none d-xl-block ps-2">
+                        <div>{{ user?.fullname || "Guest" }}</div>
+                    <div class="mt-1 small text-secondary">{{ user?.email || "Guest" }}</div>
+                      </div>
               </a>
+
+
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="#" class="dropdown-item">Status</a>
-                <a href="./profile.html" class="dropdown-item">Profile</a>
-                <a href="#" class="dropdown-item">Feedback</a>
+                <a href="" class="dropdown-item">Profile</a>
                 <div class="dropdown-divider"></div>
-                <a href="./settings.html" class="dropdown-item">Settings</a>
-                <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                 <a href="#" @click.prevent="logout" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>
@@ -89,7 +110,7 @@ const LogoCompany = '/images/logo.png'
                   <ul class="navbar-nav">
 
                    <li class="nav-item">
-                    <RouterLink to="/home" class="nav-link">
+                    <RouterLink to="/" class="nav-link">
                         <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
                         <i class="nav-icon fa fa-home fa-lg"></i>
                         </span>
@@ -98,7 +119,7 @@ const LogoCompany = '/images/logo.png'
                     </li>
 
                      <li class="nav-item">
-                    <RouterLink to="/our-services" class="nav-link">
+                    <RouterLink to="/profile" class="nav-link">
                         <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
                         <i class="nav-icon fas fa-building fa-lg"></i>
                         </span>
@@ -135,7 +156,7 @@ const LogoCompany = '/images/logo.png'
 
 
                     <li class="nav-item">
-                    <RouterLink to="/list-check-up-client" class="nav-link">
+                    <RouterLink to="/cabang-kami" class="nav-link">
                         <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
                           <i class="fa-icon fas fa-location-dot fa-lg"></i>
                         </span>
@@ -144,7 +165,7 @@ const LogoCompany = '/images/logo.png'
                   </li>
 
                     <li class="nav-item">
-                    <RouterLink to="/list-check-up-client" class="nav-link">
+                    <RouterLink to="/teams" class="nav-link">
                         <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
                           <i class="fa-icon fas fa-people-group fa-lg"></i>
                         </span>
@@ -154,7 +175,7 @@ const LogoCompany = '/images/logo.png'
 
 
                   <li class="nav-item">
-                    <RouterLink to="/list-check-up-client" class="nav-link">
+                    <RouterLink to="/fasiltas-kami" class="nav-link">
                         <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
                           <i class="fa-icon fas fa-house-medical fa-lg"></i>
                         </span>
@@ -163,11 +184,20 @@ const LogoCompany = '/images/logo.png'
                   </li>
 
                   <li class="nav-item">
-                    <RouterLink to="/list-check-up-client" class="nav-link">
+                    <RouterLink to="/information-promo" class="nav-link">
                         <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
                           <i class="fa-icon fas fa-circle-info fa-lg"></i>
                         </span>
-                        <span class="nav-link-title text-warning">infomation(Promo-Blog)</span>
+                        <span class="nav-link-title text-warning">infomation(Promo)</span>
+                    </RouterLink>
+                  </li>
+
+                  <li class="nav-item">
+                    <RouterLink to="/contact" class="nav-link">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block text-warning">
+                          <i class="fa-solid fa-tty"></i>
+                        </span>
+                        <span class="nav-link-title text-warning">Contact</span>
                     </RouterLink>
                   </li>
                    

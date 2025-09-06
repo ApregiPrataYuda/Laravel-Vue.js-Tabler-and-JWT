@@ -50,7 +50,7 @@ const profileImage = '/images/avatar.jpg';
             <small class="d-block px-3 nav-link-icon d-md-none d-lg-inline-block text-uppercase">Administrator</small>
           </li>
           <li class="nav-item">
-            <RouterLink to="/" class="nav-link">
+            <RouterLink to="/dashboard" class="nav-link">
               <span class="nav-link-icon d-md-none d-lg-inline-block">
                 <i class="nav-icon fa fa-home"></i>
               </span>
@@ -58,16 +58,13 @@ const profileImage = '/images/avatar.jpg';
             </RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink to="" class="nav-link">
+            <RouterLink to="/users" class="nav-link">
               <span class="nav-link-icon d-md-none d-lg-inline-block">
-                <i class="nav-icon fa fa-table"></i>
+                <i class="nav-icon fa fa-users"></i>
               </span>
-              <span class="nav-link-title">Category Data</span>
+              <span class="nav-link-title">Users Data</span>
             </RouterLink>
           </li>
-         
-
-
         </ul>
       </div>
       <!-- END NAVBAR MENU -->
