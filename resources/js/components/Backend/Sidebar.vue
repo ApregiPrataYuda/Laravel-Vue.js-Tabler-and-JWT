@@ -21,7 +21,7 @@ const profileImage = '/images/avatar.jpg';
       <!-- END NAVBAR TOGGLER -->
 
       <div class="navbar-brand d-flex align-items-center">
-        <span class="fw-bold text-capitalize mt-2 me-2">Laravel 12 - Vue.js 3</span>
+        <span class="fw-bold text-capitalize mt-2 me-2">Administrator</span>
       </div>
 
       <hr class="my-2 border-light">

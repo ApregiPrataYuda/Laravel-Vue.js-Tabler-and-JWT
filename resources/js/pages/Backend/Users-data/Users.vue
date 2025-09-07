@@ -1,8 +1,29 @@
 <script setup>
 import DefaultLayout from "@/layouts/DefaultLayout.vue"; 
-import { ref } from 'vue'
-
+import { ref, reactive, onMounted , watch} from 'vue'
+import { useStoreUsers } from '../../../store/useUsersStore';
 const PagesTitle = 'Data Users';
+
+const dataUsers = useStoreUsers();
+
+onMounted(async () => {
+  if (!localStorage.getItem("token")) {
+    alert("Silakan login terlebih dahulu!")
+    return
+  }
+  await dataUsers.fetchUsers(dataUsers.buildUrl())
+})
+
+
+watch(() => dataUsers.searchUsers, (val) => {
+      dataUsers.searchWithDelay(val)
+})
+
+const showDetail = async (id) => {
+  await dataUsers.detailUsers(id)
+}
+
+
 
 // code export excel
 const exportModalOpen = ref(false)
@@ -155,7 +176,7 @@ const handleImportExcel = () => {
     </div>
 
     <!-- Tombol Reset paling kanan -->
-    <button class="btn btn-outline-warning d-flex align-items-center gap-2 ms-auto">
+    <button class="btn btn-outline-warning d-flex align-items-center gap-2 ms-auto" @click="dataUsers.resetFilters">
       <i class="fas fa-undo"></i> Reset
     </button>
 
@@ -174,7 +195,9 @@ const handleImportExcel = () => {
                     <label class="mb-0 fw-semibold">
                     <i class="fas fa-list-ul me-1"></i> Tampilkan:
                     </label>
-                    <select class="form-select w-auto">
+                    <select class="form-select w-auto"
+                     v-model.number="dataUsers.pagination.per_page" 
+                            @change="dataUsers.changePageSize">
                     <option>10</option>
                     <option>25</option>
                     <option>50</option>
@@ -193,18 +216,18 @@ const handleImportExcel = () => {
              <div class="d-flex flex-column gap-3 align-items-end" style="min-width:300px;">
                 <!-- Pencarian -->
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Cari Data">
+                    <input type="text" class="form-control" placeholder="Cari Data" v-model="dataUsers.searchUsers">
                     <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
                 </div>
 
                 <!-- Urutan -->
                 <div class="d-flex gap-2 align-items-center">
                     <label class="mb-0 fw-semibold">Urutkan:</label>
-                    <select class="form-select w-auto">
-                    <option value="name">Nama</option>
+                    <select class="form-select w-auto" v-model="dataUsers.sort.column" @change="dataUsers.changeSorting">
+                    <option value="fullname">Nama</option>
                     <option value="created_at">Tanggal Dibuat</option>
                     </select>
-                    <select class="form-select w-auto">
+                    <select class="form-select w-auto" v-model="dataUsers.sort.direction" @change="dataUsers.changeSorting">
                     <option value="asc">Naik</option>
                     <option value="desc">Turun</option>
                     </select>
@@ -223,29 +246,85 @@ const handleImportExcel = () => {
                 <thead>
                   <tr>
                     <th style="width: 5%;">No.</th>
-                    <th>Invoice Subject</th>
-                    <th>Client</th>
-                    <th>VAT No.</th>
+                    <th>Fullname</th>
+                    <th>Username</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Role</th>
                     <th>Created</th>
-                    <th>Status</th>
-                    <th>Price</th>
                     <th style="width: 8%;">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr v-for="n in 10" :key="n">
-                    <td>{{ n }}</td>
-                    <td>Sample Invoice</td>
-                    <td>Client Name</td>
-                    <td>123456789</td>
-                    <td>12 Feb 2025</td>
-                    <td><span class="badge bg-success">Paid</span></td>
-                    <td>$500</td>
-                    <td>
-                      <button class="btn btn-warning me-2"><i class="fa fa-edit"></i></button>
-                      <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                    </td>
-                  </tr>
+
+                <tbody v-if="dataUsers.loadingUsers">
+                    <tr>
+                      <td colspan="8" class="text-center py-4">
+                        <!-- <div class="spinner-border text-secondary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div> -->
+                        <div class="page page-center">
+                          <div class="container container-slim py-4">
+                            <div class="text-center">
+                              <div class="mb-3">
+                                <a href="." class="navbar-brand navbar-brand-autodark"><img src="" height="36" alt="" /></a>
+                              </div>
+                              <div class="text-primary mb-3">Preparing application</div>
+                              <div class="progress progress-sm">
+                                <div class="progress-bar progress-bar-indeterminate"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+
+                  <tbody v-else-if="dataUsers.usersData.length === 0">
+                    <tr>
+                      <td colspan="8" class="text-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center">
+                          <img
+                            src="https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif"
+                            alt="No data found"
+                            style="max-width: 250px; height: auto;"
+                            class="mb-3"
+                          />
+                          <p class="text-danger fw-bold fst-italic">
+                            <i class="fa fa-exclamation-circle me-1"></i>
+                            Data Users tidak ditemukan.
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+
+
+
+                <tbody v-else>
+                    <tr v-for="(du, index) in dataUsers.usersData" :key="du.id || index">
+                      <td>{{ index + 1 + (dataUsers.pagination.per_page * (dataUsers.pagination.current_page - 1)) }}.</td>
+                      <td>{{  du.fullname }}</td>
+                      <td>{{  du.username }}</td>
+                      <td>{{  du.phone_number }}</td>
+                      <td>{{  du.email }}</td>
+                      <td>{{  du.role }}</td>
+                      <td>{{ dataUsers.formatDate(du.created_at)  }}</td>
+                      <td>
+                        <button class="btn btn-outline-warning me-2">
+                         <i class="fa fa-edit"></i> 
+                       </button>
+
+                        <button class="btn btn-outline-danger me-2">
+                            <i class="fa fa-trash"></i> 
+                        </button>
+
+                         <button class="btn btn-outline-danger"  data-bs-toggle="modal"
+                            data-bs-target="#userDetailModal"
+                            @click="showDetail(du.id)">
+                            <i class="fa fa-eye"></i> 
+                        </button>
+                      </td>
+                    </tr>
                 </tbody>
               </table>
             </div>
@@ -254,17 +333,22 @@ const handleImportExcel = () => {
           <!-- Card: Pagination -->
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-              <button class="btn btn-outline-secondary">
-                <i class="fa-solid fa-circle-chevron-left"></i> Prev
+              <button class="btn btn-outline-secondary" 
+                  :disabled="!dataUsers.pagination.prev_page_url || dataUsers.loadingUsers"
+                  @click="dataUsers.fetchUsers(dataUsers.pagination.prev_page_url)">
+                <i class="fa-solid fa-circle-chevron-left"
+                ></i> Prev
               </button>
   
                 <div class="mx-2 d-flex flex-column flex-sm-row align-items-center gap-1">
-                    <span class="badge border text-secondary px-3 py-2">Page 1 of 10</span>
-                    <span class="badge border text-secondary px-3 py-2">Total: 50 data</span>
+                    <span class="badge border text-secondary px-3 py-2"> {{ dataUsers.usersData.length }} data | on page {{ dataUsers.pagination.current_page }}</span>
+                    <span class="badge border text-secondary px-3 py-2">Total: {{ dataUsers.pagination.total }}  data</span>
                 </div>
   
-                <button class="btn btn-outline-secondary">
-                                Next <i class="fa-solid fa-circle-chevron-right"></i>
+                <button class="btn btn-outline-secondary"
+                :disabled="!dataUsers.pagination.next_page_url || dataUsers.loadingUsers"
+                  @click="dataUsers.fetchUsers(dataUsers.pagination.next_page_url)">
+                    Next <i class="fa-solid fa-circle-chevron-right"></i>
                 </button>
             </div>
           </div>
@@ -274,6 +358,47 @@ const handleImportExcel = () => {
 
      
     </div>
+
+
+
+
+  <!-- Code Modal: Detail Data -->
+<div class="modal modal-blur fade" id="userDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      
+      <!-- Header -->
+      <div class="modal-header">
+        <h5 class="modal-title">Detail User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+         <div class="modal-body">                   
+          <div v-if="dataUsers.loading" class="d-flex justify-content-center align-items-center" style="min-height:150px;">
+  <div class="spinner-border text-secondary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+          <div v-else-if="dataUsers.userDetail">
+            <p><strong>Nama:</strong> {{ dataUsers.userDetail.fullname }}</p>
+            <p><strong>Email:</strong> {{ dataUsers.userDetail.email }}</p>
+            <p><strong>Role:</strong> {{ dataUsers.userDetail.role }}</p>
+          </div>
+      </div>
+      </div>
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 
